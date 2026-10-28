@@ -1,0 +1,10 @@
+build/
+dist/
+*.spec
+__pycache__/
+gtfs.zip
+# early prototypes and AI drafts (kept locally, not part of the app)
+deepseek_*
+solve.py
+scan.py
+compact.py
