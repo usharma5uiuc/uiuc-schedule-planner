@@ -268,6 +268,7 @@ def score_schedule(mtgs, prefs):
             worst = max(worst, tr[0])
             pen += tr[0] * prefs["walk_weight"] / 2
     pen += sum("F" in x["days"] for x in mtgs) * 40 * prefs["friday_weight"]  # slider 3 = 2h of gaps per Friday class
+    pen += sum("M" in x["days"] for x in mtgs) * 40 * prefs.get("monday_weight", 0)
     return pen, worst, trips
 
 

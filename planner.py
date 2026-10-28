@@ -9,6 +9,7 @@ ORANGE, BLUE, GRAY, SUPPORT = "#FF5F05", "#13294B", "#707372", "#1E56A0"
 BG, PANEL, LINE, TEXT, MUTED = "#F7F5F2", "#FFFFFF", "#E3E0DB", "#13294B", "#707372"
 COURSE_COLORS = ["#FF5F05", "#1E56A0", "#13294B", "#C84113", "#5E7CA6", "#707372", "#E8914F", "#2C6E6A"]
 TIMES = [h * 60 + m for h in range(7, 22) for m in (0, 30)]
+DAY_BUDGET = 5  # Lighter Mondays + Lighter Fridays can't exceed this together
 
 
 def fmt(mins):
@@ -127,6 +128,7 @@ class Planner(tk.Tk):
         self.sliders = {}
         for key, label, default in [("gap_weight", "Fewer gaps between classes", 2),
                                     ("friday_weight", "Lighter Fridays", 3),
+                                    ("monday_weight", "Lighter Mondays", 0),
                                     ("quiz_weight", "Quiz sections later in the week", 1),
                                     ("walk_weight", "Shorter walks", 2)]:
             r = ttk.Frame(left); r.pack(fill="x", pady=2)
@@ -135,6 +137,10 @@ class Planner(tk.Tk):
             sc.set(default)
             sc.pack(side="right")
             self.sliders[key] = sc
+        # Mondays and Fridays share one budget: raising one past it pulls the other down (max is 50/50)
+        for a, b in (("friday_weight", "monday_weight"), ("monday_weight", "friday_weight")):
+            self.sliders[a].config(command=lambda v, b=b: float(v) + self.sliders[b].get() > DAY_BUDGET
+                                   and self.sliders[b].set(DAY_BUDGET - float(v)))
 
         self.go = ttk.Button(left, text="Find my schedule", style="Go.TButton", command=self.find)
         self.go.pack(fill="x", side="bottom")
